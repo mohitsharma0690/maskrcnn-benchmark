@@ -79,13 +79,13 @@ class DatasetCatalog(object):
         "cityscapes_fine_instanceonly_seg_test_cocostyle": {
             "img_dir": "cityscapes/images",
             "ann_file": "cityscapes/annotations/instancesonly_filtered_gtFine_test.json"
-        }
+        },
 
         # Custom datasets
         "ms_cutting_dataset_1": {
             "img_dir": "ms_datasets/cutting_1",
-            "ann_file": "ms_datasets/cutting_1/annotations/annotations.json"
-            "split": "train"
+            "ann_file": "ms_datasets/cutting_1/annotations/annotations.json",
+            "split": "train",
         },
     }
 
@@ -113,7 +113,7 @@ class DatasetCatalog(object):
                 factory="PascalVOCDataset",
                 args=args,
             )
-        elif "ms_datasets" in name:
+        elif name[:3] == "ms_":
             data_dir = DatasetCatalog.DATA_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(

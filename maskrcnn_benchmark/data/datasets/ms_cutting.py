@@ -9,12 +9,11 @@ from maskrcnn_benchmark.structures.bounding_box import BoxList
 from maskrcnn_benchmark.structures.segmentation_mask import SegmentationMask
 
 class MSCuttingDataset(torch.utils.data.Dataset):
-    def __init__(
-        self, ann_file, root, remove_images_without_annotations,
-        transforms=None):
+    def __init__(self, ann_file, root, remove_images_without_annotations=True,
+                 transforms=None):
         super(MSCuttingDataset, self).__init__()
 
-        self.json_file = ann_file
+        self.json_root = ann_file
         self.data_root = root
 
         json_data = json.load(open(self.json_root, 'r'))
@@ -45,7 +44,7 @@ class MSCuttingDataset(torch.utils.data.Dataset):
 
         self.transforms = transforms
 
-    def get_bounding_box_for_scrot_annotation_dict(self, anno_dict, mode-"xywh"):
+    def get_bounding_box_for_scrot_annotation_dict(self, anno_dict, mode="xywh"):
         if mode == "xywh":
             return (anno_dict['x'], anno_dict['y'], anno_dict['width'],
                     anno_dict['height'])
