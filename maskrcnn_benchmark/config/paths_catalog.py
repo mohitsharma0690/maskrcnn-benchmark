@@ -83,7 +83,7 @@ class DatasetCatalog(object):
 
         # Custom datasets
         "ms_cutting_dataset_1": {
-            "img_dir": "ms_datasets/cutting_1",
+            "img_dir": "ms_datasets/cutting_1/",
             "ann_file": "ms_datasets/cutting_1/annotations/annotations.json",
             "split": "train",
         },

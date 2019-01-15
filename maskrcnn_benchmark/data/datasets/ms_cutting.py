@@ -24,8 +24,8 @@ class MSCuttingDataset(torch.utils.data.Dataset):
         self.continuous_category_id_to_json_id = {}
         for i, annot_data in enumerate(json_data):
             if annot_data['class'] == 'image':
-                self.img_id_to_path[image_id] = annot_data['filename'] 
-                self.img_id_to_anno[image_id] = annot_data
+                self.img_id_to_path[img_id] = annot_data['filename'] 
+                self.img_id_to_anno[img_id] = annot_data
                 img_id = img_id + 1
                 
                 for anno in annot_data['annotations']:
@@ -38,7 +38,7 @@ class MSCuttingDataset(torch.utils.data.Dataset):
                         category_id = category_id + 1
 
         
-        self.num_images = image_id
+        self.num_images = img_id
         print("Total images loaded: {}, total classes: {}".format(
             self.num_images, len(self.continuous_category_id_to_json_id)))
 
@@ -56,18 +56,20 @@ class MSCuttingDataset(torch.utils.data.Dataset):
             raise ValueError("Incorrect mode {}".format(mode))
 
     def __getitem__(self, idx):
-        img_path, anno = self.img_id_to_path[image_id], self.img_id_to_anno[idx]
+        img_path, anno = self.img_id_to_path[idx], self.img_id_to_anno[idx]
 
         img = Image.open(os.path.join(self.data_root, img_path)).convert('RGB')
-        if self.transform is not None:
-            img = self.transform(img)
+        '''
+        if self.transforms is not None:
+            img = self.transforms(img)
+        '''
 
         boxes = [self.get_bounding_box_for_scrot_annotation_dict(obj) 
                     for obj in anno['annotations']]
         boxes = torch.as_tensor(boxes).reshape(-1, 4)  # guard against no boxes
         target = BoxList(boxes, img.size, mode="xywh").convert("xyxy")
 
-        classes = [obj["class"] for obj in anno]
+        classes = [obj["class"] for obj in anno['annotations']]
         classes = [self.json_category_id_to_contiguous_id[c] for c in classes]
         classes = torch.tensor(classes)
         target.add_field("labels", classes)
@@ -81,36 +83,11 @@ class MSCuttingDataset(torch.utils.data.Dataset):
 
         return img, target, idx
 
-    def __getitem__(self, idx):
-        img, anno = super(COCODataset, self).__getitem__(idx)
-
-        # filter crowd annotations
-        # TODO might be better to add an extra field
-        anno = [obj for obj in anno if obj["iscrowd"] == 0]
-
-        boxes = [obj["bbox"] for obj in anno]
-        boxes = torch.as_tensor(boxes).reshape(-1, 4)  # guard against no boxes
-        target = BoxList(boxes, img.size, mode="xywh").convert("xyxy")
-
-        classes = [obj["category_id"] for obj in anno]
-        classes = [self.json_category_id_to_contiguous_id[c] for c in classes]
-        classes = torch.tensor(classes)
-        target.add_field("labels", classes)
-
-        masks = [obj["segmentation"] for obj in anno]
-        masks = SegmentationMask(masks, img.size)
-        target.add_field("masks", masks)
-
-        target = target.clip_to_image(remove_empty=True)
-
-        if self.transforms is not None:
-            img, target = self.transforms(img, target)
-
-        return img, target, idx
-    
     def __len__(self):
         return self.num_images
 
     def get_img_info(self, index):
-        img_data = self.img_id_to_path[index]
-        return img_data
+        img_path = self.img_id_to_path[index]
+        img = Image.open(os.path.join(self.data_root, img_path)).convert('RGB')
+        img_info = {"height": img.height, "width": img.width}
+        return img_info

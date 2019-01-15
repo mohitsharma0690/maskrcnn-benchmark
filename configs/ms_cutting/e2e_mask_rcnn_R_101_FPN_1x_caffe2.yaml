@@ -19,17 +19,8 @@ MODEL:
     POOLER_SAMPLING_RATIO: 2
     FEATURE_EXTRACTOR: "FPN2MLPFeatureExtractor"
     PREDICTOR: "FPNPredictor"
-  ROI_MASK_HEAD:
-    POOLER_SCALES: (0.25, 0.125, 0.0625, 0.03125)
-    FEATURE_EXTRACTOR: "MaskRCNNFPNFeatureExtractor"
-    PREDICTOR: "MaskRCNNC4Predictor"
-    POOLER_RESOLUTION: 14
-    POOLER_SAMPLING_RATIO: 2
-    RESOLUTION: 28
-    SHARE_BOX_FEATURE_EXTRACTOR: False
-  MASK_ON: True
 DATASETS:
-  TRAIN: ("ms_cutting_dataset_1", "coco_2014_valminusminival")
+  TRAIN: ("ms_cutting_dataset_1",)
   TEST: ("ms_cutting_dataset_1",)
 DATALOADER:
   SIZE_DIVISIBILITY: 32
