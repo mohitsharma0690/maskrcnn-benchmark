@@ -11,6 +11,8 @@ args=(
   SOLVER.CHECKPOINT_PERIOD 5
   TEST.IMS_PER_BATCH 1
 
+  MODEL.MS_CHECKPOINT_WEIGHTS_TO_REMOVE '["roi_heads.box.predictor.cls_score.weight", "roi_heads.box.predictor.cls_score.bias", "roi_heads.box.predictor.bbox_pred.weight", "roi_heads.box.predictor.bbox_pred.bias"]'
+
 )
 
 echo "${args[@]}"

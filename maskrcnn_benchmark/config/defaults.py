@@ -32,6 +32,8 @@ _C.MODEL.META_ARCHITECTURE = "GeneralizedRCNN"
 _C.MODEL.WEIGHT = ""
 
 
+_C.MODEL.MS_CHECKPOINT_WEIGHTS_TO_REMOVE = []
+
 # -----------------------------------------------------------------------------
 # INPUT
 # -----------------------------------------------------------------------------
