@@ -96,12 +96,17 @@ class Checkpointer(object):
         return torch.load(f, map_location=torch.device("cpu"))
 
     def _load_model(self, checkpoint):
-        print(self.cfg.MODEL.MS_CHECKPOINT_WEIGHTS_TO_REMOVE)
+        print("Will remove weights: {}".format(
+            self.cfg.MODEL.MS_CHECKPOINT_WEIGHTS_TO_REMOVE))
         model_to_load = checkpoint.pop("model")
         for weight_to_remove in self.cfg.MODEL.MS_CHECKPOINT_WEIGHTS_TO_REMOVE:
-            model_to_load.pop(weight_to_remove, None)
-        import pdb; pdb.set_trace()
-        load_state_dict(self.model, model_to_load)
+            if model_to_load.get(weight_to_remove) is not None:
+                print("Did find key: {}. Will remove".format(weight_to_remove))
+                model_to_load.pop(weight_to_remove, None)
+
+        load_state_dict(
+                self.model, model_to_load,
+                weights_to_remove=self.cfg.MODEL.MS_CHECKPOINT_WEIGHTS_TO_REMOVE)
 
 
 class DetectronCheckpointer(Checkpointer):
